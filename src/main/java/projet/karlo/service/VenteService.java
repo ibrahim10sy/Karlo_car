@@ -63,7 +63,7 @@ public class VenteService {
                 Path imagePath = imageRootLocation.resolve(imageName);
                 try {
                     Files.copy(imageFile.getInputStream(), imagePath, StandardCopyOption.REPLACE_EXISTING);
-                    String onlineImagePath =fileUploade.uploadImageToFTP(imagePath, imageName);
+                    // String onlineImagePath =fileUploade.uploadImageToFTP(imagePath, imageName);
                     imagePaths.add(imageName);
                 } catch (IOException e) {
                     throw new IOException("Erreur lors de la sauvegarde de l'image : " + imageFile.getOriginalFilename(), e);

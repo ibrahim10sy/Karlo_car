@@ -21,7 +21,7 @@ public class Marque {
     @Column(nullable = false)
     private String nomMarque;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String logo;
     
     @OneToMany(mappedBy = "marque")

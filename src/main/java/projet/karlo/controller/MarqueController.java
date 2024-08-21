@@ -83,34 +83,34 @@ public class MarqueController {
         return new ResponseEntity<>(marqueService.getAllMarque(), HttpStatus.OK);
     }
 
-
-          @GetMapping("/{idMarque}/image")
-            public ResponseEntity<byte[]> getImage(@PathVariable String idMarque) {
-                try {
-                    // Récupérer le nom de l'image associée a la marque
-                    Marque marque = marqueRepository.findByIdMarque(idMarque);
-                    if (marque == null || marque.getLogo() == null) {
-                        return ResponseEntity.notFound().build();
-                    }
-            
-                    String imageName = marque.getLogo();
-            
-                    // Récupérer l'image à partir du serveur FTP
-                    byte[] imageBytes = fileUploade.getImageByName(imageName);
-            
-                    // Détecter le type de contenu de l'image en fonction de son extension
-                MediaType contentType = detectContentType(imageName);
-            
-                // Retourner l'image avec le type de contenu approprié
-                return ResponseEntity.ok()
-                        .contentType(contentType)
-                        .body(imageBytes);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+    @GetMapping("/{idMarque}/image")
+    public ResponseEntity<byte[]> getImage(@PathVariable String idMarque) {
+        try {
+            // Récupérer le nom de l'image associée a la marque
+            Marque marque = marqueRepository.findByIdMarque(idMarque);
+            if (marque == null || marque.getLogo() == null) {
+                return ResponseEntity.notFound().build();
             }
-            }
-            
+    
+            String imageName = marque.getLogo();
+    
+            // Récupérer l'image à partir du serveur FTP
+            byte[] imageBytes = fileUploade.getImageByName(imageName);
+    
+            // Détecter le type de contenu de l'image en fonction de son extension
+        MediaType contentType = detectContentType(imageName);
+    
+        // Retourner l'image avec le type de contenu approprié
+        return ResponseEntity.ok()
+                .contentType(contentType)
+                .body(imageBytes);
+    } catch (IOException e) {
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+    }
+    }
+          
+        
             private MediaType detectContentType(String imageName) {
                 String[] parts = imageName.split("\\.");
                 if (parts.length > 1) {

@@ -16,6 +16,8 @@ public interface VenteRepository extends JpaRepository<Vente,String> {
 
     @Query("SELECT FUNCTION('DATE_FORMAT', v.dateAjout, '%Y-%m') AS monthYear, SUM(v.montant) FROM Vente v GROUP BY FUNCTION('DATE_FORMAT', v.dateAjout, '%Y-%m')")
     List<Object[]> findTotalSalesByMonth();
+
+    Vente findByIdVente(String idVente);
     
 
 }

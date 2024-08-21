@@ -1,9 +1,12 @@
 package projet.karlo.controller;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +25,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import projet.karlo.model.VoitureLouer;
 import projet.karlo.model.VoitureVendre;
+import projet.karlo.repository.VoitureLouerRepository;
+import projet.karlo.repository.VoitureVendreRepository;
+import projet.karlo.service.FileUpload;
 import projet.karlo.service.VoitureVendreService;
 
 @RestController
@@ -30,6 +36,10 @@ public class VoitureVendreController {
 
     @Autowired
     VoitureVendreService voitureServices;
+    @Autowired
+    FileUpload fileUploade;
+    @Autowired
+    VoitureVendreRepository vRepository;
 
     @PostMapping("/addVoiture")
     @Operation(summary = "création d'une voiture à vendre")
@@ -50,6 +60,53 @@ public class VoitureVendreController {
                 return new ResponseEntity<>(savedVoiture, HttpStatus.CREATED);
             }
 
+        @GetMapping("/{idVoiture}/images/{imageName}")
+public ResponseEntity<byte[]> getImage(@PathVariable String idVoiture, @PathVariable String imageName) {
+    try {
+        VoitureVendre r = vRepository.findByIdVoiture(idVoiture);
+        if (r == null || !r.getImages().contains(imageName)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Récupérer l'image à partir du serveur FTP
+        List<String> imageNames = new ArrayList<>();
+        imageNames.add(imageName);
+        byte[] imageBytes = fileUploade.getImagesByNames(imageNames);
+
+        // Détecter le type de contenu de l'image
+        MediaType contentType = detectContentType(imageName);
+
+        return ResponseEntity.ok()
+                .contentType(contentType)
+                .body(imageBytes);
+    } catch (IOException e) {
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+    }
+    }
+
+            private MediaType detectContentType(String imageName) {
+                // for (String image : imageName) {
+                    String[] parts = imageName.split("\\.");
+                    if (parts.length > 1) {
+                        String extension = parts[parts.length - 1].toLowerCase();
+                        switch (extension) {
+                            case "jpg":
+                            case "jpeg":
+                                return MediaType.IMAGE_JPEG;
+                            case "png":
+                                return MediaType.IMAGE_PNG;
+                            case "gif":
+                                return MediaType.IMAGE_GIF;
+                            // Ajoutez d'autres cas pour les types de contenu supplémentaires si nécessaire
+                            default:
+                                break;
+                        }
+                    }
+                // }
+                // Par défaut, retourner MediaType.APPLICATION_OCTET_STREAM
+                return MediaType.APPLICATION_OCTET_STREAM;
+            }    
     @PutMapping("/update/{id}")
     @Operation(summary = "modification d'une voiture à vendre")
     public ResponseEntity<VoitureVendre> updateVoiture(
