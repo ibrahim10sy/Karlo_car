@@ -1,10 +1,12 @@
 package projet.karlo.service;
 
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import projet.karlo.model.Transaction;
 import projet.karlo.model.TypeReservoir;
 import projet.karlo.model.TypeTransaction;
 import projet.karlo.model.User;
@@ -53,7 +55,7 @@ public class TypeTransactionService {
         List<TypeTransaction> typeList =  typeRepository.findAll();
         if(typeList.isEmpty())
             throw new IllegalStateException("Aucune transaction trouvée");
-
+            typeList.sort(Comparator.comparing(TypeTransaction::getLibelle));
             return typeList;
 
     }

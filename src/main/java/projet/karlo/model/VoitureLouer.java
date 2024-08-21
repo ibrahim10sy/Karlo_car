@@ -34,6 +34,8 @@ public class VoitureLouer {
     @Column(nullable = false)
     private String annee;
 
+    private Boolean isDisponible;
+
     @Column(nullable = false)
     private String typeBoite;
 
@@ -58,7 +60,7 @@ public class VoitureLouer {
     private Boolean isChauffeur = false;
 
     @ElementCollection
-    @CollectionTable(name = "voiture_images", joinColumns = @JoinColumn(name = "id_voiture"))
+    @CollectionTable(name = "voiture_louer_images", joinColumns = @JoinColumn(name = "id_voiture"))
     @Column(name = "image_path")
     private List<String> images = new ArrayList<>();
 

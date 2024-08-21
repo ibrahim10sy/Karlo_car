@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import projet.karlo.model.VoitureLouer;
 import projet.karlo.model.VoitureVendre;
 import projet.karlo.service.VoitureVendreService;
 
@@ -75,6 +76,36 @@ public class VoitureVendreController {
                 return new ResponseEntity<>(voitureServices.updateNbViev(id), HttpStatus.OK);
             }
 
+             @GetMapping("/searchVoituresVendre")
+            public List<VoitureVendre> searchVoitures(
+                    @RequestParam(required = false) String nomMarque,
+                    @RequestParam(required = false) String nomTypeVoiture,
+                    @RequestParam(required = false) String nomTypeReservoir,
+                    @RequestParam(required = false) Integer prix
+                    ) {
+                return voitureServices.searchVoitures(nomMarque, nomTypeVoiture, nomTypeReservoir, prix);
+            }
+
+
+            @PutMapping("/activer/{id}")
+            @Operation(summary="Activation d'une voiture à vendre mettre son statut à disponible")
+            public ResponseEntity<VoitureVendre> activeVoitureVendre(@PathVariable String id) throws Exception {
+                return new ResponseEntity<>(voitureServices.active(id), HttpStatus.OK);
+            }
+        
+            @PutMapping("/desactiver/{id}")
+            @Operation(summary="Desactivation d'une voiture vendre mettre son statut à non disponible")
+            public ResponseEntity<VoitureVendre> desactiveVoitureVendre(@PathVariable String id) throws Exception {
+                return new ResponseEntity<>(voitureServices.desactive(id), HttpStatus.OK);
+            }
+
+            @GetMapping("/getAllVoitureVendreByUser/{idUser}")
+            @Operation(summary="Liste de toutes les voitures à vendre par utilisateur")
+            public ResponseEntity<List<VoitureVendre>> getAllVoitureVendreByUser(@PathVariable String idUser){
+                return new ResponseEntity<>(voitureServices.getAllVoitureVendreByUser(idUser),HttpStatus.OK);
+            }
+
+
             @GetMapping("/getAllVoiture")
             @Operation(summary="Liste de toutes les Voitures")
             public ResponseEntity<List<VoitureVendre>> getAllVoitures(){
@@ -129,10 +160,14 @@ public class VoitureVendreController {
                 return new ResponseEntity<>(voitureServices.getAllVoitureByPrixAugmenterMoinsChere(),HttpStatus.OK);
             }
 
+             
+             
+             
              @DeleteMapping("/delete/{id}")
-    @Operation(summary="Supprimé de voiture")
-    public String deleteVoitures(@PathVariable String id) {
-        return voitureServices.deleteVoiture(id);
+             @Operation(summary="Supprimé de voiture à louer")
+     public ResponseEntity<Void> deleteVoitureLouer(@PathVariable("id") String id) {
+        voitureServices.deleteVoiture(id);
+        return  new ResponseEntity<>(HttpStatus.OK);
     }
 }
 

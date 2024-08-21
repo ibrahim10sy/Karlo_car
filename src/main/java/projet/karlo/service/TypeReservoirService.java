@@ -1,10 +1,12 @@
 package projet.karlo.service;
 
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import projet.karlo.model.Transaction;
 import projet.karlo.model.TypeReservoir;
 import projet.karlo.model.User;
 import projet.karlo.repository.TypeReservoirRepository;
@@ -44,6 +46,8 @@ public class TypeReservoirService {
         List<TypeReservoir> t = typeReservoirRepository.findAll();
         if(t.isEmpty())
             throw new IllegalStateException("Aucun type trouvée");
+        t.sort(Comparator.comparing(TypeReservoir::getNomTypeReservoir));
+
         return t;
     }
 

@@ -54,6 +54,16 @@ public class TransactionController {
         return new ResponseEntity<>(transactionService.getAllTransactionsByDate(date), HttpStatus.OK);
     }
 
+    @GetMapping("/totalDepot")
+    public Long getTotalAmountForDepot() {
+        return transactionService.getTotalAmountForDepot();
+    }
+
+    @GetMapping("/totalRetrait")
+    public Long getTotalAmountForRetrait() {
+        return transactionService.getTotalAmountForRetrait();
+    }
+
     @DeleteMapping("/delete/{id}")
     @Operation(summary="Supprimé de Transaction")
     public ResponseEntity<Void> deleteTransactions(@PathVariable("id") String id) {

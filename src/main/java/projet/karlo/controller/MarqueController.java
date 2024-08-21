@@ -1,5 +1,6 @@
 package projet.karlo.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,11 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import projet.karlo.model.Marque;
+import projet.karlo.repository.MarqueRepository;
+import projet.karlo.service.FileUpload;
 import projet.karlo.service.MarquesService;
+import org.springframework.http.MediaType;
+
 
 @RestController
 @RequestMapping("/marque")
@@ -30,6 +35,10 @@ public class MarqueController {
 
     @Autowired
     MarquesService marqueService;
+    @Autowired
+    MarqueRepository marqueRepository;
+    @Autowired
+    FileUpload fileUploade;
 
     @PostMapping("/addMarque")
     @Operation(summary = "création d'une marque de voiture")
@@ -73,6 +82,56 @@ public class MarqueController {
     public ResponseEntity<List<Marque>> getAll(){
         return new ResponseEntity<>(marqueService.getAllMarque(), HttpStatus.OK);
     }
+
+
+          @GetMapping("/{idMarque}/image")
+            public ResponseEntity<byte[]> getImage(@PathVariable String idMarque) {
+                try {
+                    // Récupérer le nom de l'image associée a la marque
+                    Marque marque = marqueRepository.findByIdMarque(idMarque);
+                    if (marque == null || marque.getLogo() == null) {
+                        return ResponseEntity.notFound().build();
+                    }
+            
+                    String imageName = marque.getLogo();
+            
+                    // Récupérer l'image à partir du serveur FTP
+                    byte[] imageBytes = fileUploade.getImageByName(imageName);
+            
+                    // Détecter le type de contenu de l'image en fonction de son extension
+                MediaType contentType = detectContentType(imageName);
+            
+                // Retourner l'image avec le type de contenu approprié
+                return ResponseEntity.ok()
+                        .contentType(contentType)
+                        .body(imageBytes);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            }
+            }
+            
+            private MediaType detectContentType(String imageName) {
+                String[] parts = imageName.split("\\.");
+                if (parts.length > 1) {
+                    String extension = parts[parts.length - 1].toLowerCase();
+                    switch (extension) {
+                        case "jpg":
+                        case "jpeg":
+                            return MediaType.IMAGE_JPEG;
+                        case "png":
+                            return MediaType.IMAGE_PNG;
+                        case "gif":
+                            return MediaType.IMAGE_GIF;
+                        // Ajoutez d'autres cas pour les types de contenu supplémentaires si nécessaire
+                        default:
+                            break;
+                    }
+                }
+                // Par défaut, retourner MediaType.APPLICATION_OCTET_STREAM
+                return MediaType.APPLICATION_OCTET_STREAM;
+            }
+
 
     
     @DeleteMapping("/delete/{id}")

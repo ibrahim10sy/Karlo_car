@@ -78,7 +78,6 @@ public class UserController {
     public User connexions(@RequestParam("email")  String email,
                             @RequestParam("password")  String password) {
         return userService.connexionUser(email, password);
-        
     }
 
     // @PostMapping("/loginss")
@@ -93,13 +92,10 @@ public class UserController {
     // }
 
     
-    @PostMapping("/logout")
-    public ResponseEntity<String> logout(@RequestParam String idUser) {
+    @PutMapping("/logout/{idUser}")
+    public ResponseEntity<Void> logout(@PathVariable("idUser") String idUser) {
         userService.logoutUser(idUser);
-        return new ResponseEntity<>("Déconnexion réussie", HttpStatus.OK);
+        return new ResponseEntity<>( HttpStatus.OK);
     }
-
-
-
-
+    
 }

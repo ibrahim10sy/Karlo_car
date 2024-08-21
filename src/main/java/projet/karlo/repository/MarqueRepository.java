@@ -9,4 +9,6 @@ import projet.karlo.model.Marque;
 public interface MarqueRepository extends JpaRepository<Marque,String>{
     
     Marque findByNomMarque(String nom);
+
+    Marque findByIdMarque(String idMarque);
 }

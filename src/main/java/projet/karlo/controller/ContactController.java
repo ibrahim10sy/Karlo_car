@@ -44,9 +44,11 @@ public class ContactController {
         return new ResponseEntity<>(contactService.getContacts(), HttpStatus.OK);
     }
 
+    
     @DeleteMapping("/delete/{id}")
     @Operation(summary="Supprimé de Contact")
-    public String deleteContacts(@PathVariable String id) {
-        return contactService.deleteContact(id);
+    public ResponseEntity<Void> deleteContacts(@PathVariable("id") String id) {
+        contactService.deleteContact(id);
+        return  new ResponseEntity<>(HttpStatus.OK); 
     }
 }

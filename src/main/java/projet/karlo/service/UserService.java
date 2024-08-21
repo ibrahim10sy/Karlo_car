@@ -32,14 +32,19 @@ public class UserService {
     @Autowired
     RoleRepository roleRepository;
 
+
     @Autowired
     EmailService emailService;
 
     public User createUser(User user){
-        // Role role = roleRepository.findById(user.getRole().getIdRole());
+ 
+        User u = userRepository.findByEmail(user.getEmail());
 
-        // if(role == null)
-        //     throw new IllegalStateException("Aucun role trouvée");
+        String passWordHasher = passwordEncoder.encode(user.getPassword());
+        user.setPassword(passWordHasher);
+
+        if(u != null)
+            throw new IllegalStateException("Cet email existe déjà");
         
         String idcodes = idGenerator.genererCode();
         String pattern = "yyyy-MM-dd HH:mm";
@@ -57,7 +62,8 @@ public class UserService {
 
     public User updateUser(User user, String id) {
         User u = userRepository.findById(id).orElseThrow(() -> new IllegalStateException("User non trouvé") );
-
+        String passWordHasher = passwordEncoder.encode(user.getPassword());
+        u.setPassword(passWordHasher);
         u.setNomUser(user.getNomUser());
         u.setAdresse(user.getAdresse());
         u.setEmail(user.getEmail());
@@ -75,7 +81,7 @@ public class UserService {
         if (users.isEmpty())
             throw new EntityNotFoundException("Aucune utilisateur trouvée");
     
-        users.sort(Comparator.comparing(User::getNomUser));
+        users.sort(Comparator.comparing(User::getDateAjout).reversed());
         
         return users;
     }
@@ -114,7 +120,7 @@ public class UserService {
         }
     
         if (!user.getStatut()) {
-            throw new NoContentException("Connexion échouée : votre compte est désactivé.");
+            throw new IllegalArgumentException("Connexion échouée : votre compte est désactivé.");
         }
     
         String pattern = "yyyy-MM-dd HH:mm";
@@ -128,8 +134,13 @@ public class UserService {
             Alerte al = new Alerte(user.getEmail(), "Bonjour " +  user.getNomUser().toUpperCase() +" un utilisateur essaie de se connecter avec vos identifiants. Veuillez noter qu'on ne peut pas se connecter avec un compte sur 2 appareils différents. Nous vous conseillons de changer votre mot de passe dès que possible.", "Alerte de securité");
            emailService.sendSimpleMail(al);
             // Échouer la connexion
-            throw new NoContentException("Connexion échouée : un appareil est déjà connecté avec ce compte.");
+            throw new IllegalArgumentException("Connexion échouée : un appareil est déjà connecté avec ce compte.");
         }
+        // if (user != null && user.getRole().getLibelle().toLowerCase().equals("user")) {
+        //     // Échouer la connexion
+        //     throw new IllegalArgumentException("Connexion échouée : juste les administrateurs sont autorisés à se connecter à ce panel.");
+        // }
+        
     
         // Mettre à jour l'état de connexion de l'utilisateur
         user.setIsConnected(true);
@@ -171,6 +182,7 @@ public class UserService {
                 throw new IllegalStateException("L'utilisateur n'est pas actuellement connecté.");
             }
             user.setIsConnected(false);
+            historiqueService.createHistorique("Déconnexion de  " + user.getNomUser() + ", rôle " + user.getRole().getLibelle());
             userRepository.save(user);
         }
 

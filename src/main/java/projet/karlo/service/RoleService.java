@@ -47,7 +47,7 @@ public class RoleService {
         if (role.isEmpty())
             throw new EntityNotFoundException("Aucune role trouvée");
 
-        role.sort(Comparator.comparing(Role::getLibelle));
+        role.sort(Comparator.comparing(Role::getLibelle).reversed());
         return role;
     }
 

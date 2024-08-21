@@ -47,6 +47,6 @@ public class TypeVoitureController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteTypeVoitures(@PathVariable("id") String id) {
         typeVoitureService.deleteType(id);
-        return  new ResponseEntity<>(HttpStatus.OK); 
+        return  new ResponseEntity<>(HttpStatus.OK);
     }
 }

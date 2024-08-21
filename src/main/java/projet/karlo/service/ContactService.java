@@ -1,6 +1,7 @@
 package projet.karlo.service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 
@@ -25,7 +26,11 @@ public class ContactService {
     public Contact createContact(Contact contact) {
         String idcodes = idGenerator.genererCode();
         contact.setIdContact(idcodes);
-        contact.setDateAjout(LocalDateTime.now().toString());
+        String pattern = "yyyy-MM-dd HH:mm";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+        LocalDateTime now = LocalDateTime.now();
+        String formattedDateTime = now.format(formatter);
+        contact.setDateAjout(formattedDateTime);
         Alerte al = new Alerte(contact.getEmail(), contact.getMessage());
         emailService.sendSimpleMail(al);
 
@@ -48,7 +53,7 @@ public class ContactService {
         if(contacts.isEmpty())
             throw new IllegalStateException("No contacts");
 
-        contacts.sort(Comparator.comparing(Contact::getDateAjout));
+        contacts.sort(Comparator.comparing(Contact::getDateAjout).reversed());
 
         return contacts;
     }

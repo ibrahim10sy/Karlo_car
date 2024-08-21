@@ -1,5 +1,4 @@
 package projet.karlo.model;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,22 +15,17 @@ import lombok.ToString;
 
 @Entity
 @Data
-public class Reservation {
+public class Vente {
 
     @Id
-    private String idReservation;
-
-    @Column(nullable = false)
-    private String dateDebut;
+    private String idVente;
   
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String dateAjout;
   
     @Column(nullable = true)
     private String dateModif;
 
-    @Column(nullable = false)
-    private String dateFin;
 
     @Column(nullable = false)
     private String nomClient;
@@ -46,12 +40,13 @@ public class Reservation {
     private String description;
 
     @ElementCollection
-    @CollectionTable(name = "pieces_reservation", joinColumns = @JoinColumn(name = "id_reservation"))
+    @CollectionTable(name = "pieces_vente", joinColumns = @JoinColumn(name = "id_vente"))
     @Column(name = "image_path")
     private List<String> images = new ArrayList<>();
 
     @ManyToOne
 
     @ToString.Exclude
-    VoitureLouer voitureLouer;
+    VoitureVendre voitureVendre;
+    
 }

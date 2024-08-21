@@ -49,6 +49,8 @@ public class VoitureVendre {
     @Column(nullable = false)
     private int nbPortiere;
 
+    private Boolean isVendu;
+
     @Column(nullable = false)
     private int prixProprietaire;
 
@@ -56,7 +58,7 @@ public class VoitureVendre {
     private int prixAugmente;
 
     @ElementCollection
-    @CollectionTable(name = "voiture_images", joinColumns = @JoinColumn(name = "id_voiture"))
+    @CollectionTable(name = "voiture_vendre_images", joinColumns = @JoinColumn(name = "id_voiture"))
     @Column(name = "image_path")
     private List<String> images = new ArrayList<>();
 

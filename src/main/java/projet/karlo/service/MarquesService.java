@@ -24,6 +24,8 @@ public class MarquesService {
     MarqueRepository marqueRepository;
     @Autowired
     IdGenerator idGenerator;
+    @Autowired
+    FileUpload fileUploade;
 
     public Marque createMarque(Marque marque, MultipartFile logoFile) throws Exception {
         Marque m = marqueRepository.findByNomMarque(marque.getNomMarque());
@@ -32,7 +34,7 @@ public class MarquesService {
             throw new IllegalStateException("Cette marque existe déjà");
     
         if (logoFile != null) {
-            String imageLocation = "C:\\xampp\\htdocs\\karlo";
+              String imageLocation = "/karlo"; 
             try {
                 Path imageRootLocation = Paths.get(imageLocation);
                 if (!Files.exists(imageRootLocation)) {
@@ -42,8 +44,8 @@ public class MarquesService {
                 String imageName = UUID.randomUUID().toString() + "_" + logoFile.getOriginalFilename();
                 Path imagePath = imageRootLocation.resolve(imageName);
                 Files.copy(logoFile.getInputStream(), imagePath, StandardCopyOption.REPLACE_EXISTING);
-    
-                marque.setLogo("karlo/" + imageName); // Utiliser le nom de fichier généré
+                String onlineImagePath =fileUploade.uploadImageToFTP(imagePath, imageName);
+                marque.setLogo(imageName); // Utiliser le nom de fichier généré
     
             } catch (IOException e) {
                 throw new Exception("Erreur lors du traitement du fichier image : " + e.getMessage());
@@ -62,7 +64,7 @@ public class MarquesService {
         m.setNomMarque(marque.getNomMarque());
 
         if (logoFile != null) {
-            String imageLocation = "C:\\xampp\\htdocs\\karlo";
+              String imageLocation = "/karlo"; 
             try {
                 Path imageRootLocation = Paths.get(imageLocation);
                 if (!Files.exists(imageRootLocation)) {
@@ -73,13 +75,14 @@ public class MarquesService {
                 Path imagePath = imageRootLocation.resolve(imageName);
                 Files.copy(logoFile.getInputStream(), imagePath, StandardCopyOption.REPLACE_EXISTING);
                 // String onlineImagePath =fileUploade.uploadImageToFTP(imagePath, imageName);
-
+                String onlineImagePath =fileUploade.uploadImageToFTP(imagePath, imageName);
                 m.setLogo(imageName);
 
             } catch (IOException e) {
                 throw new  Exception("Erreur lors du traitement du fichier image : " + e.getMessage());
             }
         }
+        
         return marqueRepository.save(m);
     }
 

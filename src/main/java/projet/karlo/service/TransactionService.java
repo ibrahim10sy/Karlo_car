@@ -49,8 +49,16 @@ public class TransactionService {
         String formattedDateTime = now.format(formatter);
         transaction.setIdTransaction(idcodes);
         transaction.setDateTransaction(formattedDateTime);
-        historiqueService.createHistorique("Ajout " + transaction.getDescription());
+        historiqueService.createHistorique("Ajout de transaction" + transaction.getDescription() + "montant " + transaction.getMontant());
         return transRepository.save(transaction);
+    }
+
+    public Long getTotalAmountForDepot() {
+        return transRepository.calculateTotalAmountForDepot();
+    }
+
+    public Long getTotalAmountForRetrait() {
+        return transRepository.calculateTotalAmountForRetrait();
     }
 
     public Transaction updateTrans(Transaction transaction , String id){
@@ -64,12 +72,13 @@ public class TransactionService {
         LocalDateTime now = LocalDateTime.now();
         String formattedDateTime = now.format(formatter);
         t.setDateModif(formattedDateTime);
+        t.setMontant(transaction.getMontant());
 
         if(transaction.getTypeTransaction() != null){
             t.setTypeTransaction(transaction.getTypeTransaction());
         }
 
-        historiqueService.createHistorique("Modificatipn " + t.getDescription());
+        historiqueService.createHistorique("Modification de transaction description" + t.getDescription() + "montant " + t.getMontant());
         return transRepository.save(t);
     }
 
@@ -79,8 +88,8 @@ public class TransactionService {
         if(transactions.isEmpty())
             throw new IllegalStateException("No transactions");
         
-        transactions.sort(Comparator.comparing(Transaction::getDateTransaction));
-        return transactions;
+            transactions.sort(Comparator.comparing(Transaction::getDateTransaction).reversed());
+            return transactions;
     }
 
     public List<Transaction> getAllTransactionsByDate(String date) {
@@ -89,8 +98,8 @@ public class TransactionService {
         if(transactions.isEmpty())
             throw new IllegalStateException("No transactions");
         
-        transactions.sort(Comparator.comparing(Transaction::getDateTransaction));
-        return transactions;
+            transactions.sort(Comparator.comparing(Transaction::getDateTransaction).reversed());
+            return transactions;
     }
 
     public List<Transaction> getAllTransactionsByType(String libelle) {
@@ -99,8 +108,8 @@ public class TransactionService {
         if(transactions.isEmpty())
             throw new IllegalStateException("No transactions");
     
-        transactions.sort(Comparator.comparing(Transaction::getDateTransaction));
-        return transactions;
+            transactions.sort(Comparator.comparing(Transaction::getDateTransaction).reversed());
+            return transactions;
     }
 
     public String deleteTransaction(String id){

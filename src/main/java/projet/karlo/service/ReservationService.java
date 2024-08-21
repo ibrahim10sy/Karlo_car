@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.persistence.EntityNotFoundException;
+import java.time.YearMonth;
 
 import java.nio.file.Files;
 
@@ -33,14 +34,23 @@ public class ReservationService {
     @Autowired
     VoitureLouerRepository vRepository;
     @Autowired
+    VoitureLouerRepository voitureLouerRepository;
+    @Autowired
     HistoriqueService historiqueService;
+    @Autowired
+    FileUpload fileUploade;
 
-    public Reservation createReservation (Reservation reservation, List<MultipartFile> imageFiles) throws IOException {
+
+    public Reservation createReservation (Reservation reservation, List<MultipartFile> imageFiles) throws Exception {
         VoitureLouer vlouer = vRepository.findById( reservation.getVoitureLouer().getIdVoiture()).orElseThrow();
-
+        if (vlouer != null) {
+            vlouer.setIsDisponible(false); // Mettre le statut à false non dispo
+            // Vous devez sauvegarder la voiture aussi si elle est modifiée
+            voitureLouerRepository.save(vlouer);
+        }
         // Traitement des fichiers d'images
     if (imageFiles != null && !imageFiles.isEmpty()) {
-        String imageLocation = "C:\\xampp\\htdocs\\karlo";
+          String imageLocation = "/karlo"; 
         Path imageRootLocation = Paths.get(imageLocation);
         if (!Files.exists(imageRootLocation)) {
             Files.createDirectories(imageRootLocation);
@@ -53,7 +63,8 @@ public class ReservationService {
                 Path imagePath = imageRootLocation.resolve(imageName);
                 try {
                     Files.copy(imageFile.getInputStream(), imagePath, StandardCopyOption.REPLACE_EXISTING);
-                    imagePaths.add("/karlo/" + imageName);
+                    String onlineImagePath =fileUploade.uploadImageToFTP(imagePath, imageName);
+                    imagePaths.add(imageName);
                 } catch (IOException e) {
                     throw new IOException("Erreur lors de la sauvegarde de l'image : " + imageFile.getOriginalFilename(), e);
                 }
@@ -74,7 +85,7 @@ public class ReservationService {
         return rRepository.save(reservation);
     }
 
-    public Reservation updateReservation(Reservation reservation, String id , List<MultipartFile> imageFiles ) throws IOException{
+    public Reservation updateReservation(Reservation reservation, String id , List<MultipartFile> imageFiles ) throws Exception{
         Reservation res = rRepository.findById(id).orElseThrow();
 
         res.setDateDebut(reservation.getDateDebut());
@@ -90,7 +101,7 @@ public class ReservationService {
 
           // Traitement des fichiers d'images
     if (imageFiles != null && !imageFiles.isEmpty()) {
-        String imageLocation = "C:\\xampp\\htdocs\\karlo";
+          String imageLocation = "/karlo"; 
         Path imageRootLocation = Paths.get(imageLocation);
         if (!Files.exists(imageRootLocation)) {
             Files.createDirectories(imageRootLocation);
@@ -103,7 +114,8 @@ public class ReservationService {
                 Path imagePath = imageRootLocation.resolve(imageName);
                 try {
                     Files.copy(imageFile.getInputStream(), imagePath, StandardCopyOption.REPLACE_EXISTING);
-                    imagePaths.add("/karlo/" + imageName);
+                    String onlineImagePath =fileUploade.uploadImageToFTP(imagePath, imageName);
+                    imagePaths.add(imageName);
                 } catch (IOException e) {
                     throw new IOException("Erreur lors de la sauvegarde de l'image : " + imageFile.getOriginalFilename(), e);
                 }
@@ -118,10 +130,38 @@ public class ReservationService {
         LocalDateTime now = LocalDateTime.now();
         String formattedDateTime = now.format(formatter);
         res.setDateModif(formattedDateTime);
-        // historiqueService.createHistorique("Modification réservation de voiture " + res.getVoitureLouer().getModele() + " matricule " + res.getVoitureLouer().getMatricule());
+        historiqueService.createHistorique("Modification réservation de voiture " + res.getVoitureLouer().getModele() + " matricule " + res.getVoitureLouer().getMatricule());
 
         return rRepository.save(res);
     }
+
+    public Map<String, Long> getTotalAmountByMonth() {
+        List<Object[]> results = rRepository.findTotalAmountByMonth();
+        Map<String, Long> totalByMonth = new HashMap<>();
+        
+        // Convert the results to a map
+        for (Object[] result : results) {
+            String monthYear = (String) result[0];
+            Long totalAmount = ((Number) result[1]).longValue();
+            totalByMonth.put(monthYear, totalAmount);
+        }
+
+        // Generate a list of all months of the current year
+        YearMonth now = YearMonth.now();
+        for (int month = 1; month <= 12; month++) {
+            String monthYear = now.withMonth(month).toString();
+            monthYear = monthYear.substring(0, 7); // Extract 'YYYY-MM'
+            totalByMonth.putIfAbsent(monthYear, 0L);
+        }
+
+        return totalByMonth;
+    }
+
+
+    public Long getTotalReservation() {
+        return rRepository.calculateTotalReservation();
+    }
+
 
     public List<Reservation> getAllReservation() {
 
@@ -130,7 +170,7 @@ public class ReservationService {
         if (res.isEmpty()){
             throw new EntityNotFoundException("Aucune reservation trouvée");
         }
-            res.sort(Comparator.comparing(Reservation::getDateAjout));
+            res.sort(Comparator.comparing(Reservation::getDateAjout).reversed());
         return res;
     }
 
@@ -142,7 +182,7 @@ public class ReservationService {
             throw new EntityNotFoundException("Aucune reservation trouvée");
         }
 
-            reservation.sort(Comparator.comparing(Reservation::getDateAjout));
+            reservation.sort(Comparator.comparing(Reservation::getDateAjout).reversed());
         return reservation;
     }
 
@@ -154,7 +194,7 @@ public class ReservationService {
             throw new EntityNotFoundException("Aucune reservation trouvée");
         }
 
-            reservation.sort(Comparator.comparing(Reservation::getDateAjout));
+            reservation.sort(Comparator.comparing(Reservation::getDateAjout).reversed());
         return reservation;
     }
 
@@ -166,7 +206,7 @@ public class ReservationService {
             throw new EntityNotFoundException("Aucune reservation trouvée");
         }
 
-            reservation.sort(Comparator.comparing(Reservation::getDateAjout));
+            reservation.sort(Comparator.comparing(Reservation::getDateAjout).reversed());
         return reservation;
     }
 
@@ -181,4 +221,5 @@ public class ReservationService {
             rRepository.delete(reservation);
         return "Reservation supprimé avec succèss";
     }
+
 }

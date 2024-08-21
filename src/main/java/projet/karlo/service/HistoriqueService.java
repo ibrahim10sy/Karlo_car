@@ -44,7 +44,7 @@ public class HistoriqueService {
         if (historiques.isEmpty())
             throw new EntityNotFoundException("Aucune historique trouvée");
     
-        historiques.sort(Comparator.comparing(Historique::getDateHistorique));
+        historiques.sort(Comparator.comparing(Historique::getDateHistorique).reversed());
         
         return historiques;
     }

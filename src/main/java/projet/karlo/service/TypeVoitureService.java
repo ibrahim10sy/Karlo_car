@@ -1,10 +1,12 @@
 package projet.karlo.service;
 
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import projet.karlo.model.TypeTransaction;
 import projet.karlo.model.TypeVoiture;
 import projet.karlo.repository.TypeVoitureRepository;
 
@@ -42,6 +44,7 @@ public class TypeVoitureService {
         List<TypeVoiture> t = typeVoitureRepository.findAll();
         if(t.isEmpty())
             throw new IllegalStateException("Aucun type trouvée");
+     t.sort(Comparator.comparing(TypeVoiture::getNomTypeVoiture));
         return t;
     }
 

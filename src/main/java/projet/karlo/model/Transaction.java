@@ -20,6 +20,9 @@ public class Transaction {
     private String dateModif;
 
     @Column(nullable = false)
+    private int montant;
+
+    @Column(nullable = false)
     private String description;
 
     @ManyToOne
