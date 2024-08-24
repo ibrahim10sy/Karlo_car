@@ -58,4 +58,7 @@ public interface VoitureLouerRepository extends JpaRepository<VoitureLouer,Strin
 
     List<VoitureLouer> findAllByUserIdUser(String idUser);
 
+
+    VoitureLouer findByIdVoiture(String idVoiture);
+
 }

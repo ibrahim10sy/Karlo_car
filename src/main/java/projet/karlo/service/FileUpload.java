@@ -11,6 +11,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.io.ByteArrayOutputStream;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpException;
 
 // import org.apache.commons.net.ftp.FTP;
 // import org.apache.commons.net.ftp.FTPClient;
@@ -19,119 +23,126 @@ import java.io.ByteArrayOutputStream;
 @Service
 public class FileUpload {
 
-      private static final String FTP_SERVER = "185.194.216.57";
-    private static final int FTP_PORT = 22; // Mise à jour si nécessaire
-    private static final String FTP_USER = "karloftp";
-    private static final String FTP_PASSWORD = "Coolschool2021";
+
     int retryCount = 3; 
-    // private static final String FTP_IMAGES_DIRECTORY = "/images";
-    
-    @Async
+   
+    private static final String SFTP_SERVER = "185.194.216.57";
+    private static final int SFTP_PORT = 22;
+    private static final String SFTP_USER = "karloftp";
+    private static final String SFTP_PASSWORD = "Coolschool2021";
+
     public String uploadImageToFTP(Path imagePath, String imageName) throws Exception {
-        FTPClient ftpClient = new FTPClient();
-        while (retryCount > 0) {
+        JSch jsch = new JSch();
+        Session session = null;
+        ChannelSftp channelSftp = null;
+
+        try {
+            // Initialisation de la session SFTP
+            session = jsch.getSession(SFTP_USER, SFTP_SERVER, SFTP_PORT);
+            session.setPassword(SFTP_PASSWORD);
+            session.setConfig("StrictHostKeyChecking", "no");
+            session.connect();
+
+            channelSftp = (ChannelSftp) session.openChannel("sftp");
+            channelSftp.connect();
+
+            // Vérification et création du répertoire distant
+            String remoteDir = "/home/karloftp/ftp/upload/images/";
             try {
-                ftpClient.connect(FTP_SERVER, FTP_PORT);
-                ftpClient.login(FTP_USER, FTP_PASSWORD);
-                ftpClient.enterLocalPassiveMode();
-        
-                ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-        
-                try (InputStream inputStream = Files.newInputStream(imagePath)) {
-                    String remoteFilePath = "upload/images/" + imageName; // Chemin d'acc                                                         ès complet sur le serveur FTP
-                    boolean uploadResult = ftpClient.storeFile(remoteFilePath, inputStream);
-                    if (uploadResult) {
-                        return "ftp://" + FTP_USER + "@" + FTP_SERVER + remoteFilePath; // Retourne le lien complet de l'image en ligne
-                    } else {
-                        throw new Exception("Erreur lors du chargement de l'image sur le serveur FTP.");
-                    }
-                }
-            } catch (IOException e) {
-                throw new Exception("Erreur lors de la connexion au serveur FTP : " + e.getMessage());
-            } finally {
-                try {
-                    if (ftpClient.isConnected()) {
-                        ftpClient.logout();
-                        ftpClient.disconnect();
-                    }
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            } 
-                }
-                throw new Exception("Échec du téléchargement du fichier après plusieurs tentatives.");
-    }
-      
-    // Méthode pour récupérer une image à partir de son nom
-      public byte[] getImageByName(String imageName) throws IOException {
-        // Chemin où les images sont stockées sur le serveur FTP
-        String imagePath = "upload/images/";
-    
-        // Télécharger l'image à partir du serveur FTP en utilisant son nom
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            FTPClient ftpClient = new FTPClient();
-            try {
-                ftpClient.connect(FTP_SERVER, FTP_PORT);
-                ftpClient.login(FTP_USER, FTP_PASSWORD);
-                ftpClient.enterLocalPassiveMode();
-                ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-    
-                // Chemin d'accès complet de l'image sur le serveur FTP
-                String remoteFilePath = imagePath + imageName;
-    
-                // Télécharger l'image depuis le serveur FTP
-                if (ftpClient.retrieveFile(remoteFilePath, outputStream)) {
-                    return outputStream.toByteArray(); // Retourner le tableau d'octets de l'image
-                } else {
-                    throw new IOException("Erreur lors du téléchargement de l'image depuis le serveur FTP.");
-                }
-            } finally {
-                try {
-                    if (ftpClient.isConnected()) {
-                        ftpClient.logout();
-                        ftpClient.disconnect();
-                    }
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
+                channelSftp.cd(remoteDir); // Changer de répertoire
+            } catch (SftpException e) {
+                channelSftp.mkdir(remoteDir); // Créer le répertoire s'il n'existe pas
+                channelSftp.cd(remoteDir);
+            }
+
+            // Téléchargement du fichier
+            try (InputStream inputStream = Files.newInputStream(imagePath)) {
+                String remoteFilePath = remoteDir + imageName;
+                channelSftp.put(inputStream, remoteFilePath);
+                return "sftp://" + SFTP_USER + "@" + SFTP_SERVER + "/" + remoteFilePath;
+            }
+        } catch (Exception e) {
+            throw new Exception("Erreur lors du téléchargement de l'image via SFTP : " + e.getMessage());
+        } finally {
+            if (channelSftp != null) {
+                channelSftp.disconnect();
+            }
+            if (session != null) {
+                session.disconnect();
             }
         }
     }
 
-    // Méthode pour récupérer une image à partir de son nom
-    public byte[] getImagesByName(List<String> imageName) throws IOException {
-        // Chemin où les images sont stockées sur le serveur FTP
-        String imagePath = "upload/images/";
+    // Méthode pour récupérer une image à partir de son nom    
+    public byte[] getImagesByNames(List<String> imageNames) throws IOException {
+        JSch jsch = new JSch();
+        Session session = null;
+        ChannelSftp channelSftp = null;
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     
-        // Télécharger l'image à partir du serveur FTP en utilisant son nom
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            FTPClient ftpClient = new FTPClient();
-            try {
-                ftpClient.connect(FTP_SERVER, FTP_PORT);
-                ftpClient.login(FTP_USER, FTP_PASSWORD);
-                ftpClient.enterLocalPassiveMode();
-                ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+        try {
+            session = jsch.getSession(SFTP_USER, SFTP_SERVER, SFTP_PORT);
+            session.setPassword(SFTP_PASSWORD);
+            session.setConfig("StrictHostKeyChecking", "no");
+            session.connect();
     
-                // Chemin d'accès complet de l'image sur le serveur FTP
-                String remoteFilePath = imagePath + imageName;
+            channelSftp = (ChannelSftp) session.openChannel("sftp");
+            channelSftp.connect();
     
-                // Télécharger l'image depuis le serveur FTP
-                if (ftpClient.retrieveFile(remoteFilePath, outputStream)) {
-                    return outputStream.toByteArray(); // Retourner le tableau d'octets de l'image
-                } else {
-                    throw new IOException("Erreur lors du téléchargement des images depuis le serveur FTP.");
+            // Parcourir chaque image et l'ajouter à l'outputStream
+            for (String imageName : imageNames) {
+                String imagePath = "/home/karloftp/ftp/upload/images/" + imageName;
+                try (ByteArrayOutputStream tempStream = new ByteArrayOutputStream()) {
+                    channelSftp.get(imagePath, tempStream);
+                    outputStream.write(tempStream.toByteArray());
+                } catch (Exception e) {
+                    throw new IOException("Erreur lors du téléchargement de l'image '" + imageName + "' depuis le serveur SFTP : " + e.getMessage(), e);
                 }
-            } finally {
-                try {
-                    if (ftpClient.isConnected()) {
-                        ftpClient.logout();
-                        ftpClient.disconnect();
-                    }
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
+            }
+    
+            return outputStream.toByteArray();
+    
+        } catch (Exception e) {
+            throw new IOException("Erreur lors de la connexion ou du téléchargement des images depuis le serveur SFTP : " + e.getMessage(), e);
+        } finally {
+            if (channelSftp != null) {
+                channelSftp.disconnect();
+            }
+            if (session != null) {
+                session.disconnect();
             }
         }
     }
-    
+
+    public byte[] getImageByName(String imageName) throws IOException {
+        String imagePath = "/home/karloftp/ftp/upload/images/" + imageName;
+        JSch jsch = new JSch();
+        Session session = null;
+        ChannelSftp channelSftp = null;
+
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            session = jsch.getSession(SFTP_USER, SFTP_SERVER, SFTP_PORT);
+            session.setPassword(SFTP_PASSWORD);
+            session.setConfig("StrictHostKeyChecking", "no");
+            session.connect();
+
+            channelSftp = (ChannelSftp) session.openChannel("sftp");
+            channelSftp.connect();
+
+            // Télécharger l'image depuis le serveur SFTP
+            channelSftp.get(imagePath, outputStream);
+            return outputStream.toByteArray();
+
+        } catch (Exception e) {
+            throw new IOException("Erreur lors du téléchargement de l'image depuis le serveur SFTP : " + e.getMessage(), e);
+        } finally {
+            if (channelSftp != null) {
+                channelSftp.disconnect();
+            }
+            if (session != null) {
+                session.disconnect();
+            }
+        }
+    }
+
 }

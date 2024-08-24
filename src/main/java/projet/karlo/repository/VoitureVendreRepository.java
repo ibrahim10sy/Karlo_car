@@ -51,4 +51,7 @@ List<VoitureVendre> searchVoitures(@Param("nomMarque") String nomMarque,
     List<VoitureVendre> findAllByUserIdUser(String idUser);
 
 
+    VoitureVendre findByIdVoiture(String idVoiture);
+
+
 }

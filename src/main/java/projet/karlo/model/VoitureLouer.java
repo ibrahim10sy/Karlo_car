@@ -46,7 +46,7 @@ public class VoitureLouer {
     private String dateModif;
 
     @Column(nullable = false)
-    private int nbreView;
+    private int nbreView = 0;
 
     @Column(nullable = false)
     private int nbPortiere;
