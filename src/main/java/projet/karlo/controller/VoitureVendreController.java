@@ -61,8 +61,8 @@ public class VoitureVendreController {
             }
 
         @GetMapping("/{idVoiture}/images/{imageName}")
-public ResponseEntity<byte[]> getImage(@PathVariable String idVoiture, @PathVariable String imageName) {
-    try {
+        public ResponseEntity<byte[]> getImage(@PathVariable String idVoiture, @PathVariable String imageName) {
+        try {
         VoitureVendre r = vRepository.findByIdVoiture(idVoiture);
         if (r == null || !r.getImages().contains(imageName)) {
             return ResponseEntity.notFound().build();

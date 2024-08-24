@@ -1,13 +1,21 @@
 package projet.karlo.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -15,6 +23,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import projet.karlo.model.Reservation;
 import projet.karlo.model.Vente;
 import projet.karlo.repository.VenteRepository;
 import projet.karlo.service.FileUpload;
@@ -51,37 +60,34 @@ public class VenteController {
         return new ResponseEntity<>(savedVente, HttpStatus.CREATED);
     }
     
-     @GetMapping("/{idVente}/images")
-    public ResponseEntity<byte[]> getImages(@PathVariable String idVente) {
-        try {
-            // Récupérer la vente par ID
-            Vente vente = venteRepository.findByIdVente(idVente);
-            if (vente == null || vente.getImages().isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
-
-            // Récupérer la liste des noms d'images
-            List<String> imageNames = vente.getImages();
-
-            // Récupérer les images à partir du serveur FTP
-            byte[] imageBytes = fileUploade.getImagesByNames(imageNames);
-
-            // Détecter le type de contenu de l'image principale (ou la première)
-            MediaType contentType = detectContentType(imageNames);
-
-            // Retourner les images avec le type de contenu approprié
-            return ResponseEntity.ok()
-                    .contentType(contentType)
-                    .body(imageBytes);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+     @GetMapping("/{idVente}/images/{imageName}")
+    public ResponseEntity<byte[]> getImage(@PathVariable String idVente, @PathVariable String imageName) {
+    try {
+        Vente r = venteRepository.findByIdVente(idVente);
+        if (r == null || !r.getImages().contains(imageName)) {
+            return ResponseEntity.notFound().build();
         }
+
+        // Récupérer l'image à partir du serveur FTP
+        List<String> imageNames = new ArrayList<>();
+        imageNames.add(imageName);
+        byte[] imageBytes = fileUploade.getImagesByNames(imageNames);
+
+        // Détecter le type de contenu de l'image
+        MediaType contentType = detectContentType(imageName);
+
+        return ResponseEntity.ok()
+                .contentType(contentType)
+                .body(imageBytes);
+    } catch (IOException e) {
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+    }
     }
             
-    private MediaType detectContentType(List<String> imageName) {
-        for (String image : imageName) {
-            String[] parts = image.split("\\.");
+    private MediaType detectContentType(String imageName) {
+        // for (String image : imageName) {
+            String[] parts = imageName.split("\\.");
             if (parts.length > 1) {
                 String extension = parts[parts.length - 1].toLowerCase();
                 switch (extension) {
@@ -97,7 +103,7 @@ public class VenteController {
                         break;
                 }
             }
-        }
+        // }
         // Par défaut, retourner MediaType.APPLICATION_OCTET_STREAM
         return MediaType.APPLICATION_OCTET_STREAM;
     }
