@@ -18,8 +18,10 @@ import java.util.stream.Collectors;
 
 
 import jakarta.persistence.EntityNotFoundException;
+import projet.karlo.model.User;
 import projet.karlo.model.Vente;
 import projet.karlo.model.VoitureVendre;
+import projet.karlo.repository.UserRepository;
 import projet.karlo.repository.VenteRepository;
 import projet.karlo.repository.VoitureVendreRepository;
 
@@ -38,10 +40,14 @@ public class VenteService {
     HistoriqueService historiqueService;
     @Autowired
     FileUpload fileUploade;
+     @Autowired
+    UserRepository userRepository ;
 
 
      public Vente createVente (Vente vente, List<MultipartFile> imageFiles) throws Exception {
         VoitureVendre vVendre = vRepository.findById( vente.getVoitureVendre().getIdVoiture()).orElseThrow();
+         User user  = userRepository.findById(vVendre.getUser().getIdUser()).orElseThrow();
+
     if (vVendre != null) {
         vVendre.setIsVendu(true); // Mettre le statut à true
         // Vous devez sauvegarder la voiture aussi si elle est modifiée
@@ -80,7 +86,7 @@ public class VenteService {
         String formattedDateTime = now.format(formatter);
         vente.setIdVente(idcodes);
         vente.setDateAjout(formattedDateTime);
-        historiqueService.createHistorique("Vente de voiture " + vVendre.getModele() + " matricule " + vVendre.getMatricule());
+        historiqueService.createHistorique("Vente de voiture " + vVendre.getModele() + " matricule " + vVendre.getMatricule(),user );
 
         return venteRepository.save(vente);
     }
@@ -130,7 +136,7 @@ public class VenteService {
         LocalDateTime now = LocalDateTime.now();
         String formattedDateTime = now.format(formatter);
         vExistant.setDateModif(formattedDateTime);
-        historiqueService.createHistorique("Modification vente de voiture " + vExistant.getVoitureVendre().getModele() + " matricule " + vExistant.getVoitureVendre().getMatricule());
+        historiqueService.createHistorique("Modification vente de voiture " + vExistant.getVoitureVendre().getModele() + " matricule " + vExistant.getVoitureVendre().getMatricule() ,vExistant.getUser() );
 
         return venteRepository.save(vExistant);
     }

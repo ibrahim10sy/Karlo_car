@@ -49,7 +49,7 @@ public class TransactionService {
         String formattedDateTime = now.format(formatter);
         transaction.setIdTransaction(idcodes);
         transaction.setDateTransaction(formattedDateTime);
-        historiqueService.createHistorique("Ajout de transaction" + transaction.getDescription() + "montant " + transaction.getMontant());
+        historiqueService.createHistorique("Transaction" + transaction.getDescription() + "montant " + transaction.getMontant() + "type " + transaction.getTypeTransaction().getLibelle() , transaction.getUser());
         return transRepository.save(transaction);
     }
 
@@ -78,7 +78,7 @@ public class TransactionService {
             t.setTypeTransaction(transaction.getTypeTransaction());
         }
 
-        historiqueService.createHistorique("Modification de transaction description" + t.getDescription() + "montant " + t.getMontant());
+        historiqueService.createHistorique("Modification de transaction " + t.getDescription() + "montant " + t.getMontant() + "type " + t.getTypeTransaction().getLibelle() , t.getUser());
         return transRepository.save(t);
     }
 
@@ -114,7 +114,7 @@ public class TransactionService {
 
     public String deleteTransaction(String id){
         Transaction t = transRepository.findById(id).orElseThrow();
-        historiqueService.createHistorique("Suppression " + t.getDescription());
+        historiqueService.createHistorique("Suppression " + t.getDescription() + "type " + t.getTypeTransaction().getLibelle() , t.getUser());
         transRepository.delete(t);
 
         return "Supprimé avec succèss"; 

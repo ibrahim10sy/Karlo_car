@@ -51,7 +51,6 @@ public class Reservation {
     private List<String> images = new ArrayList<>();
 
     @ManyToOne
-
     @ToString.Exclude
     VoitureLouer voitureLouer;
 }

@@ -23,7 +23,7 @@ public class HistoriqueService {
     @Autowired
     HistoriqueRepository hRepository ;
 
-    public Historique createHistorique(String description){
+    public Historique createHistorique(String description, User user){
         Historique historique = new Historique();
 
         String idcodes = idGenerator.genererCode();
@@ -34,6 +34,7 @@ public class HistoriqueService {
             historique.setIdHistorique(idcodes);
             historique.setDateHistorique(formattedDateTime);
             historique.setDescription(description);
+            historique.setUser(user);
         return hRepository.save(historique);
     }
 
