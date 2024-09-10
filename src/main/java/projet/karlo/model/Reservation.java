@@ -30,19 +30,19 @@ public class Reservation {
     @Column(nullable = true)
     private String dateModif;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String dateFin;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String nomClient;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String telephone;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private int montant;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String description;
 
     @ElementCollection
