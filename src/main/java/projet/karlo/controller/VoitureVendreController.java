@@ -133,6 +133,14 @@ public ResponseEntity<byte[]> getImage(@PathVariable String idVoiture, @PathVari
                 return new ResponseEntity<>(voitureServices.updateNbViev(id), HttpStatus.OK);
             }
 
+
+            @GetMapping("/getVoitureVendreById/{id}")
+    @Operation(summary="Recuperation d'une voiture à vendre par son id")
+    public ResponseEntity<VoitureVendre> getVoitureVendreById(@PathVariable String id) throws Exception {
+        return new ResponseEntity<>(voitureServices.getVoitureVendreById(id), HttpStatus.OK);
+    }
+
+
              @GetMapping("/searchVoituresVendre")
             public List<VoitureVendre> searchVoitures(
                     @RequestParam(required = false) String nomMarque,

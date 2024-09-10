@@ -179,6 +179,14 @@ public class VoitureVendreService {
         return voitureVendreRepository.save(v);
     }
 
+    public VoitureVendre getVoitureVendreById(String idVoiture){
+        VoitureVendre voiture = voitureVendreRepository.findByIdVoiture(idVoiture);
+
+            if (voiture == null)
+            throw new EntityNotFoundException("Voiture à vendre non trouvée ");
+            return voiture;
+    }
+
     public VoitureVendre desactive(String id) throws Exception{
         VoitureVendre v = voitureVendreRepository.findById(id).orElseThrow(null);
 

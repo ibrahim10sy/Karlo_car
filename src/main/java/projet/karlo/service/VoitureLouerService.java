@@ -303,6 +303,14 @@ public class VoitureLouerService {
         return voitureList;
     }
 
+      public VoitureLouer getVoitureLouerById(String idVoiture){
+        VoitureLouer voiture = voitureLouerRepository.findByIdVoiture(idVoiture);
+
+            if (voiture == null)
+            throw new EntityNotFoundException("Voiture à louer non trouvée ");
+            return voiture;
+    }
+
     public List<VoitureLouer> getAllVoitureByTypeVoiture(String nom){
         List<VoitureLouer> voitureList = voitureLouerRepository.findByTypeVoiture_NomTypeVoiture(nom);
 

@@ -122,6 +122,32 @@ public class VenteController {
         return new ResponseEntity<>(savedVente, HttpStatus.OK);
     }
 
+    @DeleteMapping("/images/delete/{idVente}")
+    public ResponseEntity<String> supprimerImage(
+            @PathVariable String idVente,
+            @RequestParam String imageName) {
+        boolean isDeleted = venteService.supprimerImage(idVente, imageName);
+        if (isDeleted) {
+            return ResponseEntity.ok("Image supprimée avec succès");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Image non trouvée");
+        }
+    }
+
+    //Modifier l'image d'une voiture specifique
+    @PutMapping("/images/update/{idVente}")
+    public ResponseEntity<String> modifierImage(
+            @PathVariable String idVente,
+            @RequestParam String oldImageName,
+            @RequestParam String newImageName) {
+        boolean isModified = venteService.modifierImage(idVente, oldImageName, newImageName);
+        if (isModified) {
+            return ResponseEntity.ok("Image modifiée avec succès");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Image non trouvée");
+        }
+    }
+
      @GetMapping("/getAllVente")
      @Operation(summary="Liste de tout les ventes")
       public ResponseEntity<List<Vente>> getAllVente(){

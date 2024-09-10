@@ -129,6 +129,13 @@ public ResponseEntity<byte[]> getImage(@PathVariable String idVoiture, @PathVari
     }
 
 
+       @GetMapping("/getVoitureLouerById/{id}")
+    @Operation(summary="Recuperation d'une voiture à louer par son id")
+    public ResponseEntity<VoitureLouer> getVoitureLouerById(@PathVariable String id) throws Exception {
+        return new ResponseEntity<>(voitureServices.getVoitureLouerById(id), HttpStatus.OK);
+    }
+
+
        @PutMapping("/activer/{id}")
     @Operation(summary="Activation d'une voiture à louer mettre son statut à disponible")
     public ResponseEntity<VoitureLouer> activeVoitureLouer(@PathVariable String id) throws Exception {

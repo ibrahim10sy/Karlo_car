@@ -41,7 +41,7 @@ public class VenteService {
 
 
      public Vente createVente (Vente vente, List<MultipartFile> imageFiles) throws Exception {
-        VoitureVendre vVendre = vRepository.findById( vente.getVoitureVendre().getIdVoiture()).orElseThrow();
+        VoitureVendre vVendre = vRepository.findById(vente.getVoitureVendre().getIdVoiture()).orElseThrow();
     if (vVendre != null) {
         vVendre.setIsVendu(true); // Mettre le statut à true
         // Vous devez sauvegarder la voiture aussi si elle est modifiée
@@ -84,6 +84,35 @@ public class VenteService {
 
         return venteRepository.save(vente);
     }
+
+
+    public boolean supprimerImage(String idVente, String imageName) {
+        Vente vente = venteRepository.findById(idVente).orElseThrow();
+        
+        if (vente.getImages().contains(imageName)) {
+            vente.getImages().remove(imageName);
+            vente.setDateModif(LocalDateTime.now().toString());  // Mise à jour de la date de modification
+            venteRepository.save(vente);  // Enregistrer les modifications
+            return true;
+        }
+
+        return false;  // Image non trouvée dans cette vente
+    }
+
+    public boolean modifierImage(String idVente, String oldImageName, String newImageName) {
+        Vente vente = venteRepository.findById(idVente).orElseThrow();
+        
+        int imageIndex = vente.getImages().indexOf(oldImageName);
+        if (imageIndex != -1) {
+            vente.getImages().set(imageIndex, newImageName);  // Remplacer l'image
+            vente.setDateModif(LocalDateTime.now().toString());  // Mise à jour de la date de modification
+            venteRepository.save(vente);  // Enregistrer les modifications
+            return true;
+        }
+
+        return false;  // Ancienne image non trouvée
+    }
+
 
     public Vente updateVente(Vente vente, String id , List<MultipartFile> imageFiles ) throws Exception{
         Vente vExistant = venteRepository.findById(id).orElseThrow();
