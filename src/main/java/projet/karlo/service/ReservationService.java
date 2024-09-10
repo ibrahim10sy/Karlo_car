@@ -80,7 +80,7 @@ public class ReservationService {
         String formattedDateTime = now.format(formatter);
         reservation.setIdReservation(idcodes);
         reservation.setDateAjout(formattedDateTime);
-        historiqueService.createHistorique("Réservation de voiture " + vlouer.getModele() + " matricule " + vlouer.getMatricule());
+        historiqueService.createHistorique("Réservation de voiture " + vlouer.getModele() + " matricule " + vlouer.getMatricule(), vlouer.getUser());
 
         return rRepository.save(reservation);
     }
@@ -130,7 +130,7 @@ public class ReservationService {
         LocalDateTime now = LocalDateTime.now();
         String formattedDateTime = now.format(formatter);
         res.setDateModif(formattedDateTime);
-        historiqueService.createHistorique("Modification réservation de voiture " + res.getVoitureLouer().getModele() + " matricule " + res.getVoitureLouer().getMatricule());
+        historiqueService.createHistorique("Modification réservation de voiture " + res.getVoitureLouer().getModele() + " matricule " + res.getVoitureLouer().getMatricule(), res.getVoitureLouer().getUser());
 
         return rRepository.save(res);
     }
@@ -217,6 +217,8 @@ public class ReservationService {
 
             throw new IllegalStateException("Reservation not found");
         }
+
+        historiqueService.createHistorique("Suppression d'une réservation de voiture " + reservation.getVoitureLouer().getModele() + " matricule " + reservation.getVoitureLouer().getMatricule(), reservation.getVoitureLouer().getUser());
 
             rRepository.delete(reservation);
         return "Reservation supprimé avec succèss";

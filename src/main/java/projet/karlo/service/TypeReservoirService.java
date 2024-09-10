@@ -63,7 +63,7 @@ public class TypeReservoirService {
 
         if(typeReservoir == null)
             throw new IllegalStateException("TypeReservoir not found");
-            historiqueService.createHistorique("Suppression du type reservoir" + typeReservoir.getNomTypeReservoir());
+            // historiqueService.createHistorique("Suppression du type reservoir" + typeReservoir.getNomTypeReservoir(),);
         typeReservoirRepository.delete(typeReservoir);
         return "TypeReservoir supprimé avec succèss";
     }

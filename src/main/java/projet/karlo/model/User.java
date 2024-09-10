@@ -4,7 +4,11 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.Data;
 import lombok.ToString;
 
@@ -56,4 +60,19 @@ public class User {
     (mappedBy = "user")
     @JsonIgnore
     private List<Transaction> transactions;
+
+    
+    @OneToMany
+    (mappedBy = "user")
+    @JsonIgnore
+     @ToString.Exclude
+    private List<Historique> historique;
+    
+    @OneToMany
+    (mappedBy = "user")
+    @JsonIgnore
+     @ToString.Exclude
+    private List<Vente> vente;
+
+ 
 }

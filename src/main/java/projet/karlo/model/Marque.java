@@ -29,7 +29,6 @@ public class Marque {
     @ToString.Exclude
     private List<VoitureLouer> voitureLouers;
 
-
     @OneToMany
     (mappedBy = "marque")
     @JsonIgnore

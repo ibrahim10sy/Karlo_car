@@ -24,10 +24,8 @@ import projet.karlo.repository.TypeVoitureRepository;
 import projet.karlo.repository.UserRepository;
 import projet.karlo.repository.VoitureLouerRepository;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -99,7 +97,7 @@ public class VoitureLouerService {
         }
 
         // Création de l'historique
-        historiqueService.createHistorique("Ajout de voiture de location : " + vLouer.getModele() + " matricule : " + vLouer.getMatricule());
+        historiqueService.createHistorique("Ajout de voiture de location : " + vLouer.getModele() + " matricule : " + vLouer.getMatricule(),user);
 
         return voitureLouerRepository.save(vLouer);
     }
@@ -173,7 +171,7 @@ public class VoitureLouerService {
             v.setImages(imagePaths);
         }
     
-        historiqueService.createHistorique("Modification de voiture de location : " + v.getModele() + " matricule : " + v.getMatricule());
+        historiqueService.createHistorique("Modification de voiture de location : " + v.getModele() + " matricule : " + v.getMatricule(), v.getUser());
     
         return voitureLouerRepository.save(v);
     }
@@ -276,7 +274,7 @@ public class VoitureLouerService {
         } catch (Exception e) {
             throw new Exception("Erreur lors de l'activation de la voiture: " + e.getMessage());
         }
-        historiqueService.createHistorique("Mis à jour du statut à disponible de la voiture" + v.getMatricule() + " model " + v.getModele());
+        historiqueService.createHistorique("Mis à jour du statut à disponible de la voiture" + v.getMatricule() + " model " + v.getModele(), v.getUser());
         return voitureLouerRepository.save(v);
     }
 
@@ -288,7 +286,7 @@ public class VoitureLouerService {
         } catch (Exception e) {
             throw new Exception("Erreur lors de la desactivation du User : " + e.getMessage());
         }
-        historiqueService.createHistorique("Mis à jour du statut à non disponible de la voiture" + v.getMatricule() + " model " + v.getModele());
+        historiqueService.createHistorique("Mis à jour du statut à non disponible de la voiture" + v.getMatricule() + " model " + v.getModele(), v.getUser());
         return voitureLouerRepository.save(v);
     }
 
@@ -391,19 +389,13 @@ public class VoitureLouerService {
 
     public String deleteVoiture(String id){
         VoitureLouer v = voitureLouerRepository.findById(id).orElseThrow(()-> new IllegalStateException("Voiture non trouvée"));
-        historiqueService.createHistorique("Suppression de la  voiture de location : " + v.getModele() + "matricule : " + v.getMatricule());
+        historiqueService.createHistorique("Suppression de la  voiture de location : " + v.getModele() + "matricule : " + v.getMatricule(), v.getUser());
 
         voitureLouerRepository.delete(v);
         return "Supprimé avec succès";
     }
 
-    //  public VoitureLouer updateNbViev(String id) throws Exception {
-    //     Optional<VoitureLouer> voitureOpt = voitureLouerRepository.findById(id);
-    //     int count = voitureOpt.get().getNbreView();
-
-    //     if (voitureOpt.isPresent()) {
-    //         VoitureLouer VoitureLouer = voitureOpt.get();
-    //         VoitureLouer.setNbreView(count);
+    
      public VoitureLouer updateNbViev(String id) throws Exception {
         Optional<VoitureLouer> voitureOpt = voitureLouerRepository.findById(id);
         

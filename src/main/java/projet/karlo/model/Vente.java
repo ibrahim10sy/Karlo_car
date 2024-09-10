@@ -45,8 +45,11 @@ public class Vente {
     private List<String> images = new ArrayList<>();
 
     @ManyToOne
-
     @ToString.Exclude
     VoitureVendre voitureVendre;
+    
+    @ManyToOne
+    @ToString.Exclude
+    User user;
     
 }

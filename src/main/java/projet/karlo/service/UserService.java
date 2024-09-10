@@ -55,7 +55,7 @@ public class UserService {
         user.setStatut(true);
         user.setDateAjout(formattedDateTime);
         user.setIsConnected(false);
-        historiqueService.createHistorique("Ajout de l'utilisateur" + user.getNomUser() + " rôle " + user.getRole().getLibelle());
+        historiqueService.createHistorique("Création de l'utilisateur" + user.getNomUser() + " rôle " + user.getRole().getLibelle() , user);
         return userRepository.save(user);
     }
 
@@ -71,7 +71,7 @@ public class UserService {
         if(user.getRole() != null){
             u.setRole(user.getRole());
         }
-        historiqueService.createHistorique("Modification de l'utilisateur" + u.getNomUser() + ", rôle " + u.getRole().getLibelle());
+        historiqueService.createHistorique("Modification de l'utilisateur" + u.getNomUser() + ", rôle " + u.getRole().getLibelle(),user);
         return userRepository.save(u);
     }
 
@@ -107,7 +107,7 @@ public class UserService {
 
         if(user == null)
             throw new IllegalStateException("User not found");
-            historiqueService.createHistorique("Suppression de l'utilisateur" + user.getNomUser() + ", rôle " + user.getRole().getLibelle());
+            historiqueService.createHistorique("Suppression de l'utilisateur" + user.getNomUser() + ", rôle " + user.getRole().getLibelle(),user);
         userRepository.delete(user);
         return "Utilisateur supprimé avec succèss";
     }
@@ -158,7 +158,7 @@ public class UserService {
         if(user.getStatut()==false){
             throw new NoContentException("Connexion échoué car votre compte  est desactivé ");
         }
-        historiqueService.createHistorique("Authentification de  " + user.getNomUser() + ", rôle " + user.getRole().getLibelle());
+        historiqueService.createHistorique("Authentification de  " + user.getNomUser() + ", rôle " + user.getRole().getLibelle(),user);
         return user;
         }
 
@@ -182,7 +182,7 @@ public class UserService {
                 throw new IllegalStateException("L'utilisateur n'est pas actuellement connecté.");
             }
             user.setIsConnected(false);
-            historiqueService.createHistorique("Déconnexion de  " + user.getNomUser() + ", rôle " + user.getRole().getLibelle());
+            historiqueService.createHistorique("Déconnexion de  " + user.getNomUser() + ", rôle " + user.getRole().getLibelle() , user);
             userRepository.save(user);
         }
 
@@ -196,7 +196,7 @@ public class UserService {
             } catch (Exception e) {
                 throw new Exception("Erreur lors de l'activation du User: " + e.getMessage());
             }
-            historiqueService.createHistorique("Activation de l'utilisateur" + user.getNomUser() + " rôle " + user.getRole().getLibelle());
+            historiqueService.createHistorique("Activation de l'utilisateur" + user.getNomUser() + " rôle " + user.getRole().getLibelle(),user);
             return userRepository.save(user);
         }
     
@@ -208,7 +208,7 @@ public class UserService {
             } catch (Exception e) {
                 throw new Exception("Erreur lors de la desactivation du User : " + e.getMessage());
             }
-            historiqueService.createHistorique("Désactivation de l'utilisateur" + user.getNomUser() + " rôle " + user.getRole().getLibelle());
+            historiqueService.createHistorique("Désactivation de l'utilisateur" + user.getNomUser() + " rôle " + user.getRole().getLibelle(),user);
             return userRepository.save(user);
         }
     

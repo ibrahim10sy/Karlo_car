@@ -105,7 +105,7 @@ public class VoitureVendreService {
         vVendre.setIdVoiture(idcodes);
         vVendre.setDateAjout(now.format(formatter));
 
-    historiqueService.createHistorique("Ajout de voiture de location : " + vVendre.getModele() + "matricule : " + vVendre.getMatricule());
+    historiqueService.createHistorique("Ajout de voiture de location : " + vVendre.getModele() + "matricule : " + vVendre.getMatricule(),user);
 
             return voitureVendreRepository.save(vVendre);
     }
@@ -161,7 +161,7 @@ public class VoitureVendreService {
             v.setImages(imagePaths);
         }
 
-        historiqueService.createHistorique("Modification  de voiture de location : " + v.getModele() + "matricule : " + v.getMatricule());
+        historiqueService.createHistorique("Modification  de voiture de location : " + v.getModele() + "matricule : " + v.getMatricule(), v.getUser());
 
         return voitureVendreRepository.save(v);
     }
@@ -175,7 +175,7 @@ public class VoitureVendreService {
         } catch (Exception e) {
             throw new Exception("Erreur lors de l'activation de la voiture: " + e.getMessage());
         }
-        historiqueService.createHistorique("Mis à jour du statut à vendu de la voiture" + v.getMatricule() + " model " + v.getModele());
+        historiqueService.createHistorique("Mis à jour du statut à vendu de la voiture" + v.getMatricule() + " model " + v.getModele(), v.getUser());
         return voitureVendreRepository.save(v);
     }
 
@@ -195,7 +195,7 @@ public class VoitureVendreService {
         } catch (Exception e) {
             throw new Exception("Erreur lors de la desactivation du User : " + e.getMessage());
         }
-        historiqueService.createHistorique("Mis à jour du statut à non vendu de la voiture" + v.getMatricule() + " model " + v.getModele());
+        historiqueService.createHistorique("Mis à jour du statut à non vendu de la voiture" + v.getMatricule() + " model " + v.getModele(), v.getUser());
         return voitureVendreRepository.save(v);
     }
 
@@ -319,7 +319,7 @@ public class VoitureVendreService {
 
     public String deleteVoiture(String id){
         VoitureVendre v = voitureVendreRepository.findById(id).orElseThrow(()-> new IllegalStateException("Voiture non trouvée"));
-        historiqueService.createHistorique("Suppression de la  voiture  : " + v.getModele() + "matricule : " + v.getMatricule());
+        historiqueService.createHistorique("Suppression de la  voiture  : " + v.getModele() + "matricule : " + v.getMatricule(),  v.getUser());
 
         voitureVendreRepository.delete(v);
         return "Supprimé avec succès";
