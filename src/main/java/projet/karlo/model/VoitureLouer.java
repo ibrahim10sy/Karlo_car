@@ -86,4 +86,9 @@ public class VoitureLouer {
     @OneToMany(mappedBy = "voitureLouer")
     @JsonIgnore
     private List<Reservation> reservation;
+    
+
+    @OneToMany(mappedBy = "voitureLouer")
+    @JsonIgnore
+    private List<DemandeReservation> demandeReservations;
 }
