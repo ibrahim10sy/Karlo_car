@@ -38,6 +38,20 @@ public class HistoriqueService {
         return hRepository.save(historique);
     }
 
+    public Historique createHistoriques(String description){
+        Historique historique = new Historique();
+
+        String idcodes = idGenerator.genererCode();
+        String pattern = "yyyy-MM-dd HH:mm";
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+            LocalDateTime now = LocalDateTime.now();
+            String formattedDateTime = now.format(formatter);
+            historique.setIdHistorique(idcodes);
+            historique.setDateHistorique(formattedDateTime);
+            historique.setDescription(description);
+        return hRepository.save(historique);
+    }
+
 
       public List<Historique> getAllHistoriques() {
         List<Historique> historiques = hRepository.findAll();
