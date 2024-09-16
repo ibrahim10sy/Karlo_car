@@ -22,7 +22,6 @@ import projet.karlo.model.Marque;
 import projet.karlo.model.TypeReservoir;
 import projet.karlo.model.TypeVoiture;
 import projet.karlo.model.User;
-import projet.karlo.model.VoitureLouer;
 import projet.karlo.model.VoitureVendre;
 import projet.karlo.repository.MarqueRepository;
 import projet.karlo.repository.TypeReservoirRepository;
@@ -73,7 +72,7 @@ public class VoitureVendreService {
      
     // Traitement des fichiers d'images
     if (imageFiles != null && !imageFiles.isEmpty()) {
-          String imageLocation = "/karlo"; 
+        String imageLocation = "/home/karlo/"; 
         Path imageRootLocation = Paths.get(imageLocation);
         if (!Files.exists(imageRootLocation)) {
             Files.createDirectories(imageRootLocation);
@@ -138,7 +137,7 @@ public class VoitureVendreService {
 
        // Traitement des fichiers d'images
          if (imageFiles != null && !imageFiles.isEmpty()) {
-              String imageLocation = "/karlo"; 
+            String imageLocation = "/home/karlo/"; 
             Path imageRootLocation = Paths.get(imageLocation);
             if (!Files.exists(imageRootLocation)) {
                 Files.createDirectories(imageRootLocation);

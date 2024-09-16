@@ -68,6 +68,7 @@ public class MarquesService {
         if (logoFile != null) {
               String imageLocation = "/home/karlo/"; 
             try {
+                
                 Path imageRootLocation = Paths.get(imageLocation);
                 if (!Files.exists(imageRootLocation)) {
                     Files.createDirectories(imageRootLocation);

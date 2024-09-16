@@ -2,24 +2,26 @@ package projet.karlo.service;
 
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.persistence.EntityNotFoundException;
-import java.time.YearMonth;
-
-import java.nio.file.Files;
-
 import projet.karlo.model.Reservation;
-import projet.karlo.model.Role;
 import projet.karlo.model.VoitureLouer;
 import projet.karlo.repository.ReservationRepository;
 import projet.karlo.repository.VoitureLouerRepository;
@@ -50,12 +52,12 @@ public class ReservationService {
         }
         // Traitement des fichiers d'images
     if (imageFiles != null && !imageFiles.isEmpty()) {
-          String imageLocation = "/karlo"; 
+        String imageLocation = "/home/karlo/"; 
         Path imageRootLocation = Paths.get(imageLocation);
         if (!Files.exists(imageRootLocation)) {
             Files.createDirectories(imageRootLocation);
         }
-
+        System.out.println("Debut upload "+ imageLocation);
         List<String> imagePaths = new ArrayList<>();
         for (MultipartFile imageFile : imageFiles) {
             if (!imageFile.isEmpty()) {
@@ -70,6 +72,7 @@ public class ReservationService {
                 }
             }
         }
+        System.out.println("Fin upload "+imagePaths);
         reservation.setImages(imagePaths);
     }
 
@@ -101,12 +104,12 @@ public class ReservationService {
 
           // Traitement des fichiers d'images
     if (imageFiles != null && !imageFiles.isEmpty()) {
-          String imageLocation = "/karlo"; 
+        String imageLocation = "/home/karlo/"; 
         Path imageRootLocation = Paths.get(imageLocation);
         if (!Files.exists(imageRootLocation)) {
             Files.createDirectories(imageRootLocation);
         }
-
+        System.out.println("Debut upload "+ imageLocation);
         List<String> imagePaths = new ArrayList<>();
         for (MultipartFile imageFile : imageFiles) {
             if (!imageFile.isEmpty()) {
@@ -121,6 +124,7 @@ public class ReservationService {
                 }
             }
         }
+        System.out.println("Fin upload "+imagePaths);
         res.setImages(imagePaths);
     }
 
