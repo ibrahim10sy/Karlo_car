@@ -174,7 +174,7 @@ public class VoitureVendreService {
         } catch (Exception e) {
             throw new Exception("Erreur lors de l'activation de la voiture: " + e.getMessage());
         }
-        historiqueService.createHistorique("Mis à jour du statut à vendu de la voiture" + v.getMatricule() + " model " + v.getModele(), v.getUser());
+        historiqueService.createHistorique("Mise à jour du statut à vendu de la voiture" + v.getMatricule() + " model " + v.getModele(), v.getUser());
         return voitureVendreRepository.save(v);
     }
 
