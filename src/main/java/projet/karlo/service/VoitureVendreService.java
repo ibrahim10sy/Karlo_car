@@ -192,7 +192,7 @@ public class VoitureVendreService {
         try {
             v.setIsVendu(false);
         } catch (Exception e) {
-            throw new Exception("Erreur lors de la desactivation du User : " + e.getMessage());
+            throw new Exception("Erreur lors de la desactivation du user : " + e.getMessage());
         }
         historiqueService.createHistorique("Mis à jour du statut à non vendu de la voiture" + v.getMatricule() + " model " + v.getModele(), v.getUser());
         return voitureVendreRepository.save(v);
