@@ -18,7 +18,7 @@ public class EmailService {
 
 
 
-     @Autowired private JavaMailSender javaMailSender;
+    @Autowired private JavaMailSender javaMailSender;
  
     @Value("bane8251@gmail.com") private String sender;
   

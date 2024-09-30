@@ -31,8 +31,8 @@ public class ContactService {
         LocalDateTime now = LocalDateTime.now();
         String formattedDateTime = now.format(formatter);
         contact.setDateAjout(formattedDateTime);
-        Alerte al = new Alerte(contact.getEmail(), contact.getMessage());
-        emailService.sendSimpleMail(al);
+        // Alerte al = new Alerte(contact.getEmail(), contact.getMessage());
+        // emailService.sendSimpleMail(al);
 
         return contactRepository.save(contact);
     }
