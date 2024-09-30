@@ -19,38 +19,27 @@ public class EmailService {
 
 
      @Autowired private JavaMailSender javaMailSender;
- 
-    @Value("bane8251@gmail.com") private String sender;
+     
+
+    @Value("contact@karlocar.com") private String sender;
   
 
-    public String sendSimpleMail(Alerte alerte) {
-       // Method 1
-    // To send a simple email
     
- 
-        // Try block to check for exceptions
+    public String sendSimpleMail(Alerte alerte) {
         try {
- 
-            // Creating a simple mail message
-            SimpleMailMessage mailMessage
-                = new SimpleMailMessage();
- 
-            // Setting up necessary details
+            SimpleMailMessage mailMessage = new SimpleMailMessage();
             mailMessage.setFrom(sender);
             mailMessage.setTo(alerte.getEmail());
             mailMessage.setText(alerte.getMessage());
             mailMessage.setSubject(alerte.getSujet());
- 
-            // Sending the mail
+
             javaMailSender.send(mailMessage);
-            return "Email envoyer avec succès...";
+            return "Email envoyé avec succès...";
+        } catch (Exception e) {
+            e.printStackTrace();  // Log de l'exception pour le débogage
+            return "Erreur lors de l'envoi de l'email: " + e.getMessage();
         }
- 
-        // Catch block to handle the exceptions
-        catch (Exception e) {
-            return "Erreur lors de l'envoi de l'email ";
-        }
-    }   
+    }
     
     
 }

@@ -32,6 +32,10 @@ public class MarquesService {
     
         if (m != null)
             throw new IllegalStateException("Cette marque existe déjà");
+
+            if (logoFile == null || logoFile.isEmpty()) {
+                throw new Exception("Le fichier logo n'a pas été fourni.");
+            }
     
         if (logoFile != null) {
               String imageLocation = "/karlo"; 
