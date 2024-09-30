@@ -22,7 +22,6 @@ import projet.karlo.model.Marque;
 import projet.karlo.model.TypeReservoir;
 import projet.karlo.model.TypeVoiture;
 import projet.karlo.model.User;
-import projet.karlo.model.VoitureLouer;
 import projet.karlo.model.VoitureVendre;
 import projet.karlo.repository.MarqueRepository;
 import projet.karlo.repository.TypeReservoirRepository;
@@ -73,7 +72,7 @@ public class VoitureVendreService {
      
     // Traitement des fichiers d'images
     if (imageFiles != null && !imageFiles.isEmpty()) {
-          String imageLocation = "/karlo"; 
+        String imageLocation = "/home/karlo/"; 
         Path imageRootLocation = Paths.get(imageLocation);
         if (!Files.exists(imageRootLocation)) {
             Files.createDirectories(imageRootLocation);
@@ -138,7 +137,7 @@ public class VoitureVendreService {
 
        // Traitement des fichiers d'images
          if (imageFiles != null && !imageFiles.isEmpty()) {
-              String imageLocation = "/karlo"; 
+            String imageLocation = "/home/karlo/"; 
             Path imageRootLocation = Paths.get(imageLocation);
             if (!Files.exists(imageRootLocation)) {
                 Files.createDirectories(imageRootLocation);
@@ -175,7 +174,7 @@ public class VoitureVendreService {
         } catch (Exception e) {
             throw new Exception("Erreur lors de l'activation de la voiture: " + e.getMessage());
         }
-        historiqueService.createHistorique("Mis à jour du statut à vendu de la voiture" + v.getMatricule() + " model " + v.getModele(), v.getUser());
+        historiqueService.createHistorique("Mise à jour du statut à vendu de la voiture" + v.getMatricule() + " model " + v.getModele(), v.getUser());
         return voitureVendreRepository.save(v);
     }
 
@@ -193,7 +192,7 @@ public class VoitureVendreService {
         try {
             v.setIsVendu(false);
         } catch (Exception e) {
-            throw new Exception("Erreur lors de la desactivation du User : " + e.getMessage());
+            throw new Exception("Erreur lors de la desactivation du user : " + e.getMessage());
         }
         historiqueService.createHistorique("Mis à jour du statut à non vendu de la voiture" + v.getMatricule() + " model " + v.getModele(), v.getUser());
         return voitureVendreRepository.save(v);

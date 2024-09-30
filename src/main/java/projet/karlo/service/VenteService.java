@@ -6,16 +6,18 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-import org.antlr.v4.runtime.IntStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import java.time.YearMonth;
-import java.util.stream.Collectors;
-
 
 import jakarta.persistence.EntityNotFoundException;
 import projet.karlo.model.User;
@@ -56,7 +58,7 @@ public class VenteService {
 
         // Traitement des fichiers d'images
     if (imageFiles != null && !imageFiles.isEmpty()) {
-          String imageLocation = "/karlo"; 
+        String imageLocation = "/home/karlo/"; 
         Path imageRootLocation = Paths.get(imageLocation);
         if (!Files.exists(imageRootLocation)) {
             Files.createDirectories(imageRootLocation);
@@ -136,7 +138,7 @@ public class VenteService {
 
           // Traitement des fichiers d'images
     if (imageFiles != null && !imageFiles.isEmpty()) {
-          String imageLocation = "/karlo"; 
+        String imageLocation = "/home/karlo/"; 
         Path imageRootLocation = Paths.get(imageLocation);
         if (!Files.exists(imageRootLocation)) {
             Files.createDirectories(imageRootLocation);

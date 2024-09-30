@@ -2,10 +2,18 @@ package projet.karlo.service;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,20 +23,11 @@ import projet.karlo.model.TypeReservoir;
 import projet.karlo.model.TypeVoiture;
 import projet.karlo.model.User;
 import projet.karlo.model.VoitureLouer;
-
-import projet.karlo.model.VoitureVendre;
-import projet.karlo.model.VoitureLouer;
 import projet.karlo.repository.MarqueRepository;
 import projet.karlo.repository.TypeReservoirRepository;
 import projet.karlo.repository.TypeVoitureRepository;
 import projet.karlo.repository.UserRepository;
 import projet.karlo.repository.VoitureLouerRepository;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
 
 
 @Service
@@ -72,7 +71,7 @@ public class VoitureLouerService {
     
         // Traitement des fichiers d'images
         if (imageFiles != null && !imageFiles.isEmpty()) {
-              String imageLocation = "/karlo"; 
+            String imageLocation = "/home/karlo/"; 
             // String imageLocation = "C:\\Users\\bane8\\Documents\\Spring Boot App\\Karlo_car\\images";
             Path imageRootLocation = Paths.get(imageLocation);
             if (!Files.exists(imageRootLocation)) {
@@ -140,7 +139,7 @@ public class VoitureLouerService {
     
         // Traitement des fichiers d'images
         if (imageFiles != null && !imageFiles.isEmpty()) {
-              String imageLocation = "/karlo"; 
+            String imageLocation = "/home/karlo/"; 
             Path imageRootLocation = Paths.get(imageLocation);
             if (!Files.exists(imageRootLocation)) {
                 Files.createDirectories(imageRootLocation);

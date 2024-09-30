@@ -38,13 +38,17 @@ public class UserService {
 
     public User createUser(User user){
  
-        User u = userRepository.findByEmail(user.getEmail());
+        User existingUser = userRepository.findByEmail(user.getEmail());
+    
+    if (existingUser != null) {
+        throw new IllegalStateException("Cet email existe déjà"); // Exception personnalisée
+    }
 
         String passWordHasher = passwordEncoder.encode(user.getPassword());
         user.setPassword(passWordHasher);
 
-        if(u != null)
-            throw new IllegalStateException("Cet email existe déjà");
+        // if(u != null)
+        //     throw new IllegalStateException("Cet email existe déjà");
         
         String idcodes = idGenerator.genererCode();
         String pattern = "yyyy-MM-dd HH:mm";
@@ -55,8 +59,9 @@ public class UserService {
         user.setStatut(true);
         user.setDateAjout(formattedDateTime);
         user.setIsConnected(false);
-        historiqueService.createHistorique("Création de l'utilisateur" + user.getNomUser() + " rôle " + user.getRole().getLibelle() , user);
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        historiqueService.createHistorique("Création de l'utilisateur" + user.getNomUser() + " rôle " + user.getRole().getLibelle() , savedUser);
+        return savedUser;
     }
 
 

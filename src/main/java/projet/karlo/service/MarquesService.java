@@ -38,8 +38,9 @@ public class MarquesService {
             }
     
         if (logoFile != null) {
-              String imageLocation = "/karlo"; 
+              String imageLocation = "/home/karlo/"; 
             try {
+                System.out.println("Debut upload "+ imageLocation);
                 Path imageRootLocation = Paths.get(imageLocation);
                 if (!Files.exists(imageRootLocation)) {
                     Files.createDirectories(imageRootLocation);
@@ -47,10 +48,11 @@ public class MarquesService {
     
                 String imageName = UUID.randomUUID().toString() + "_" + logoFile.getOriginalFilename();
                 Path imagePath = imageRootLocation.resolve(imageName);
+                System.out.println("image upload "+imagePath);
                 Files.copy(logoFile.getInputStream(), imagePath, StandardCopyOption.REPLACE_EXISTING);
                 String onlineImagePath =fileUploade.uploadImageToFTP(imagePath, imageName);
                 marque.setLogo(imageName); // Utiliser le nom de fichier généré
-    
+                System.out.println("Fin upload "+imageName);
             } catch (IOException e) {
                 throw new Exception("Erreur lors du traitement du fichier image : " + e.getMessage());
             }
@@ -68,8 +70,9 @@ public class MarquesService {
         m.setNomMarque(marque.getNomMarque());
 
         if (logoFile != null) {
-              String imageLocation = "/karlo"; 
+              String imageLocation = "/home/karlo/"; 
             try {
+                
                 Path imageRootLocation = Paths.get(imageLocation);
                 if (!Files.exists(imageRootLocation)) {
                     Files.createDirectories(imageRootLocation);

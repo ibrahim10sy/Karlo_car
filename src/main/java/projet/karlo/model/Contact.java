@@ -10,18 +10,18 @@ public class Contact {
     @Id
     private String  idContact;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String nomComplet;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String telephone;
   
     @Column(nullable = false)
     private String dateAjout;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String message;
 }
