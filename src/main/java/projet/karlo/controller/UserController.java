@@ -79,18 +79,6 @@ public class UserController {
                             @RequestParam("password")  String password) {
         return userService.connexionUser(email, password);
     }
-
-    // @PostMapping("/loginss")
-    // public ResponseEntity<?> login(@RequestBody String email, @RequestBody String password) {
-    //     boolean isAuthenticated = userService.authenticate(email, password);
-    //     if (isAuthenticated) {
-    //         User user = userService.findByEmail(email);
-    //         return ResponseEntity.ok(user); // Renvoie les données de l'utilisateur
-    //     } else {
-    //         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid User");
-    //     }
-    // }
-
     
     @PutMapping("/logout/{idUser}")
     public ResponseEntity<Void> logout(@PathVariable("idUser") String idUser) {
