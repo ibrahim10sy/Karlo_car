@@ -17,7 +17,7 @@ import projet.karlo.model.Alerte;
 public class EmailService {
 
 
-
+    //Mail sender 
      @Autowired private JavaMailSender javaMailSender;
      
 
